@@ -131,40 +131,37 @@ class Employee extends RegisteredEmployee {
     }
 
     // Method for an employee to apply for leave
-    void applyForLeave(Employee employee[], String employeeId, int employeeCount, Scanner sc) {
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(employeeId)) {
-                // Check if the employee has already reached the max leave request limit
-                if (employee[i].leaveRequestCount == 10) {
-                    System.out.println("Cannot apply for more leaves. Maximum limit reached.");
-                    return;
-                }
-                // Check if the employee has remaining leave days
-                if (employee[i].remainLeaveDay == 0) {
-                    System.out.println("Cannot apply for more leaves. No remaining leave days.");
-                    return;
-                }
+    void applyForLeave(Scanner sc) {
 
-                System.out.println("---> Your remaining leave days: " + employee[i].remainLeaveDay);
-                sc.nextLine(); // Consume the newline character
-                System.out.println("\n============ Apply for Leave =============");
-                System.out.print("--> Enter leave reason: ");
-                String reason = sc.nextLine();
-                System.out.print("--> Enter how many days you want leave for: ");
-                int leaveDay = sc.nextInt();
-
-                // Check if requested leave days exceed remaining leave days
-                if (employee[i].remainLeaveDay < leaveDay) {
-                    System.out.println("Cannot apply for more leaves. Exceeds remaining leave days.");
-                    return;
-                }
-
-                // Deduct leave days and store the leave request
-                employee[i].remainLeaveDay -= leaveDay;
-                employee[i].leaveRequests[employee[i].leaveRequestCount++] = new LeaveRequest(employeeId, reason, leaveDay);
-                System.out.println("Your leave application has been submitted successfully, " + employee[i].fullName + ". Manager will review and confirm shortly.");
-            }
+        int loginIndex=EmployeePortal.loginIndex;
+        if (EmployeeManagement.employee[EmployeePortal.loginIndex].leaveRequestCount == 10) {
+            System.out.println("Cannot apply for more leaves. Maximum limit reached.");
+            return;
         }
+        // Check if the employee has remaining leave days
+        if (EmployeeManagement.employee[loginIndex].remainLeaveDay == 0) {
+            System.out.println("Cannot apply for more leaves. No remaining leave days.");
+            return;
+        }
+
+        System.out.println("---> Your remaining leave days: " + EmployeeManagement.employee[loginIndex].remainLeaveDay);
+        sc.nextLine(); // Consume the newline character
+        System.out.println("\n============ Apply for Leave =============");
+        System.out.print("--> Enter leave reason: ");
+        String reason = sc.nextLine();
+        System.out.print("--> Enter how many days you want leave for: ");
+        int leaveDay = sc.nextInt();
+
+        // Check if requested leave days exceed remaining leave days
+        if (EmployeeManagement.employee[loginIndex].remainLeaveDay < leaveDay) {
+            System.out.println("Cannot apply for more leaves. Exceeds remaining leave days.");
+            return;
+        }
+
+        // Deduct leave days and store the leave request
+        EmployeeManagement.employee[loginIndex].remainLeaveDay -= leaveDay;
+        EmployeeManagement.employee[loginIndex].leaveRequests[EmployeeManagement.employee[loginIndex].leaveRequestCount++] = new LeaveRequest(employeeId, reason, leaveDay);
+        System.out.println("Your leave application has been submitted successfully, " + EmployeeManagement.employee[loginIndex].fullName + ". Manager will review and confirm shortly.");
     }
 
     // Check the status of leave requests for an employee
@@ -988,16 +985,16 @@ class EmployeeManagement { // start class EmployeeManagement
                                             updateChoice = sc.nextInt();
                                             switch (updateChoice) {//start switch for update employee profile
                                                 case 1://update first name
-                                                    portal.updateFirstName( sc);
+                                                    portal.updateFirstName(sc);
                                                     break;
                                                 case 2://update last name
-                                                    portal.updateLastName( sc);
+                                                    portal.updateLastName(sc);
                                                     break;
                                                 case 3://update email
-                                                    portal.updateEmailId( sc);
+                                                    portal.updateEmailId(sc);
                                                     break;
                                                 case 4://update mobile no
-                                                    portal.updateMobileNo( sc);
+                                                    portal.updateMobileNo(sc);
                                                     break;
                                                 default:
                                                     System.out.println("Enter valid choice!");
@@ -1017,7 +1014,7 @@ class EmployeeManagement { // start class EmployeeManagement
                                     System.out.println("Password Reset Successfully");
                                     break;
                                 case 4://case 4 for submit a leave application
-                                    employees.applyForLeave(employee, id, EmployeePortal.employeeCount, sc);
+                                    employees.applyForLeave(sc);
                                     break;
                                 case 5://case 5 for cancel a leave application
                                     employees.cancelLeaveRequest(employee, id, EmployeePortal.employeeCount, sc);
