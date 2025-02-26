@@ -267,6 +267,11 @@ class Manager {
         System.out.print("--> Enter employee number to approve/reject :- ");
         int select = sc.nextInt();
 
+        if(select<0 || select>registeredEmployeeCount){
+            System.out.println("Enter valid employee index.");
+            return;
+        }
+
         // Find actual index of selected employee
         int pendingIndex = -1, count = 0;
         for (int i = 0; i < registeredEmployeeCount; i++) {
