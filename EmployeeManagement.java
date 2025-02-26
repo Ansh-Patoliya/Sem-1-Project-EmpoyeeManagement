@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 class Person {
     // Declaring attributes of a person
-    String firstName, lastName, emailId, dateOfBirth, mobileNo, aadhaarNo, address;
+    String firstName, lastName, fullName, emailId, dateOfBirth, mobileNo, aadhaarNo, address;
 
     // Default constructor (creates an empty person object)
     Person() {
@@ -17,6 +17,7 @@ class Person {
         // Assigning values to instance variables using 'this' keyword
         this.firstName = firstName;
         this.lastName = lastName;
+        this.fullName = firstName + " " + lastName;
         this.emailId = emailId;
         this.mobileNo = mobileNo;
         this.address = address;
@@ -26,7 +27,7 @@ class Person {
 
     // Method to display the person's profile details
     void displayProfile() {
-        System.out.println("Full Name     :- " + firstName + " " + lastName);
+        System.out.println("Full Name     :- " + fullName);
         System.out.println("Email Id      :- " + emailId);
         System.out.println("Date Of Birth :- " + dateOfBirth);
         System.out.println("Mobile No     :- " + mobileNo);
@@ -161,7 +162,7 @@ class Employee extends RegisteredEmployee {
                 // Deduct leave days and store the leave request
                 employee[i].remainLeaveDay -= leaveDay;
                 employee[i].leaveRequests[employee[i].leaveRequestCount++] = new LeaveRequest(employeeId, reason, leaveDay);
-                System.out.println("Your leave application has been submitted successfully, " + employee[i].firstName + " " + employee[i].lastName + ". Manager will review and confirm shortly.");
+                System.out.println("Your leave application has been submitted successfully, " + employee[i].fullName + ". Manager will review and confirm shortly.");
             }
         }
     }
@@ -178,7 +179,7 @@ class Employee extends RegisteredEmployee {
                     return;
                 }
 
-                System.out.println("Hi " + employee[i].firstName + " " + employee[i].lastName + ", you're currently viewing the status of your leave application.");
+                System.out.println("Hi " + employee[i].fullName + ", you're currently viewing the status of your leave application.");
                 for (int j = 0; j < employee[i].leaveRequestCount; j++) {
                     employee[i].leaveRequests[j].displayLeaveRequest(); // Call method to display leave request details
                     System.out.println("-------------------------------");
@@ -249,10 +250,9 @@ class Manager {
         System.out.println("\n========== Pending Employee Approvals ==========");
         for (int i = 0; i < registeredEmployeeCount; i++) {
             if (registeredEmployee[i].status.equalsIgnoreCase("Pending")) {
-
                 found = true;
                 System.out.println("[" + (i + 1) + "] .");
-                System.out.println("    Name      : " + registeredEmployee[i].firstName + " " + registeredEmployee[i].lastName);
+                System.out.println("    Name      : " + registeredEmployee[i].fullName);
                 System.out.println("    Email     : " + registeredEmployee[i].emailId);
                 System.out.println("    Mobile    : " + registeredEmployee[i].mobileNo);
                 System.out.println("-----------------------------------------");
@@ -267,8 +267,8 @@ class Manager {
         System.out.print("--> Enter employee number to approve/reject :- ");
         int select = sc.nextInt();
 
-        if(select<0 || select>registeredEmployeeCount){
-            System.out.println("Enter valid employee index.");
+        if (select < 0 || select > registeredEmployeeCount) {
+            System.out.println("Error: Unable to find the selected employee. Please try again.");
             return;
         }
 
@@ -284,7 +284,13 @@ class Manager {
             }
         }
 
-        System.out.println("Name: " + registeredEmployee[pendingIndex].firstName + " " + registeredEmployee[pendingIndex].lastName);
+        // If pendingIndex is still -1, it means no valid selection was made
+        if (pendingIndex == -1) {
+            System.out.println("Error: Unable to find the selected employee. Please try again.");
+            return;
+        }
+
+        System.out.println("Name: " + registeredEmployee[pendingIndex].fullName);
         System.out.print("--> Approve this employee? (yes/no): ");
         String decision = sc.next();
 
@@ -313,8 +319,6 @@ class Manager {
             System.out.println("---> Employee rejected successfully.");
         } else
             System.out.println("---> Enter valid decision.");
-
-
     }
 
     void rejectedEmployee(RegisteredEmployee[] registeredEmployee, int registeredEmployeeCount) {
@@ -323,7 +327,7 @@ class Manager {
             if (registeredEmployee[i].status.equalsIgnoreCase("Rejected")) {
                 found = true;
                 System.out.println("[" + (i + 1) + "] .");
-                System.out.println("    Name      : " + registeredEmployee[i].firstName + " " + registeredEmployee[i].lastName);
+                System.out.println("    Name      : " + registeredEmployee[i].fullName);
                 System.out.println("    Email     : " + registeredEmployee[i].emailId);
                 System.out.println("    Mobile    : " + registeredEmployee[i].mobileNo);
                 System.out.println("-----------------------------------------");
@@ -341,7 +345,7 @@ class Manager {
             System.out.println("--> Employee " + (i + 1) + " :-- ");
             System.out.println("--------------------------------------------------------------");
             System.out.println("Employee ID  :- " + employee[i].employeeId);
-            System.out.println("Full Name    :- " + employee[i].firstName + " " + employee[i].lastName);
+            System.out.println("Full Name    :- " + employee[i].fullName);
             System.out.println("Email Id     :- " + employee[i].emailId);
             System.out.println("Mobile No    :- " + employee[i].mobileNo);
             // Updating and displaying total salary details
@@ -381,7 +385,7 @@ class Manager {
                 System.out.println("--> Employee " + (i + 1) + " :-- ");
                 System.out.println("--------------------------------------------------------------");
                 System.out.println("Employee ID  :- " + employee[i].employeeId);
-                System.out.println("Full Name    :- " + employee[i].firstName + " " + employee[i].lastName);
+                System.out.println("Full Name    :- " + employee[i].fullName);
                 System.out.println("Email Id     :- " + employee[i].emailId);
                 System.out.println("Mobile No    :- " + employee[i].mobileNo);
                 System.out.println("City         :- " + employee[i].address);
@@ -704,6 +708,7 @@ class EmployeePortal extends Validation {
     // Static variable to track the number of employee
     static int employeeCount;
     static int registeredEmployeeCount;
+    static int loginIndex;
 
     // Unique ID counter for generating employee IDs
     static int uniqueIdCounter = 101;
@@ -801,24 +806,14 @@ class EmployeePortal extends Validation {
     }
 
     // Method to display employee profile details
-    void viewProfile(Employee[] employee, String id) {
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(id)) {
-                employee[i].displayProfile();
-                break;
-            }
-        }
+    void viewProfile() {
+        EmployeeManagement.employee[loginIndex].displayProfile();
     }
 
     // Method to view salary details of an employee
-    void viewSalaryDetails(Employee employee[], String id) {
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(id)) {
-                System.out.println("# Your salary details have been successfully displayed, " + employee[i].firstName + " " + employee[i].lastName + ".");
-                employee[i].salaryDetails();
-                break;
-            }
-        }
+    void viewSalaryDetails() {
+        System.out.println("# Your salary details have been successfully displayed, " + EmployeeManagement.employee[loginIndex].fullName + ".");
+        EmployeeManagement.employee[loginIndex].salaryDetails();
     }
 
     // Method to validate employee login credentials
@@ -829,7 +824,8 @@ class EmployeePortal extends Validation {
                     System.out.println("Your account is not approved yet.");
                     return false;
                 }
-                System.out.println("# Welcome back, " + employee[i].firstName + " " + employee[i].lastName + "!");
+                System.out.println("# Welcome back, " + employee[i].fullName + "!");
+                loginIndex = i;
                 return true;
             }
         }
@@ -837,114 +833,70 @@ class EmployeePortal extends Validation {
     }
 
     // Method to reset employee password
-    void passwordReset(Employee employee[], int employeeCount, String id, Scanner sc) {
+    void passwordReset(Scanner sc) {
         boolean valid, found = false;
         String resetPassword = null;
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(id)) {
-                System.out.println("# Hello, " + employee[i].firstName + " " + employee[i].lastName + " it seems you need to reset your password.");
-                valid = false;
-                while (!valid) {
-                    System.out.print("--> Enter New Password :- ");
-                    resetPassword = sc.next();
-                    valid = checkPassword(resetPassword, sc);
-                }
-                employee[i].password = resetPassword;
-                found = true;
-                break;
-            }
+        System.out.println("# Hello, " + EmployeeManagement.employee[loginIndex].fullName + " it seems you need to reset your password.");
+        valid = false;
+        while (!valid) {
+            System.out.print("--> Enter New Password :- ");
+            resetPassword = sc.next();
+            valid = checkPassword(resetPassword, sc);
         }
-        if (!found) {
-            System.out.println("Employee Not Found!..");
-        }
+        EmployeeManagement.employee[loginIndex].password = resetPassword;
+
     }
 
     // Method to update employee first name
-    void updateFirstName(Employee employee[], String id, int employeeCount, Scanner sc) {
-        boolean valid = false, found = false;
+    void updateFirstName(Scanner sc) {
+        boolean valid = false;
         String fname = null;
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(id)) {
-                while (!valid) {
-                    System.out.print("--> Enter first name :- ");
-                    fname = sc.next();
-                    valid = checkName(fname.toUpperCase());
-                }
-                employee[i].firstName = fname.substring(0, 1).toUpperCase() + fname.substring(1).toLowerCase();
-                System.out.println("Your first name updated successfully");
-                found = true;
-                break;
-            }
+        while (!valid) {
+            System.out.print("--> Enter first name :- ");
+            fname = sc.next();
+            valid = checkName(fname.toUpperCase());
         }
-        if (!found) {
-            System.out.println("Employee not found!");
-        }
+        EmployeeManagement.employee[loginIndex].firstName = fname.substring(0, 1).toUpperCase() + fname.substring(1).toLowerCase();
+        System.out.println("Your first name updated successfully");
     }
 
     // Method to update employee last name
-    void updateLastName(Employee employee[], String id, int employeeCount, Scanner sc) {
-        boolean valid = false, found = false;
+    void updateLastName(Scanner sc) {
+        boolean valid = false;
         String lname = null;
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(id)) {
-                while (!valid) {
-                    System.out.print("--> Enter last name :- ");
-                    lname = sc.next();
-                    valid = checkName(lname.toUpperCase());
-                }
-                employee[i].lastName = lname.substring(0, 1).toUpperCase() + lname.substring(1).toLowerCase();
-                System.out.println("Your last name updated successfully");
-                found = true;
-                break;
-            }
+        while (!valid) {
+            System.out.print("--> Enter last name :- ");
+            lname = sc.next();
+            valid = checkName(lname.toUpperCase());
         }
-        if (!found) {
-            System.out.println("Employee not found!");
-        }
+        EmployeeManagement.employee[loginIndex].lastName = lname.substring(0, 1).toUpperCase() + lname.substring(1).toLowerCase();
+        System.out.println("Your last name updated successfully");
     }
 
     // Method to update employee mobile number
-    void updateMobileNo(Employee employee[], String id, int employeeCount, Scanner sc) {
+    void updateMobileNo(Scanner sc) {
         boolean valid = false, found = false;
         String mobileNo = null;
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(id)) {
-                while (!valid) {
-                    System.out.print("--> Enter mobile No :- ");
-                    mobileNo = sc.next();
-                    valid = checkMobileNo(mobileNo);
-                }
-                employee[i].mobileNo = mobileNo;
-                System.out.println("Your mobile no. updated successfully");
-                found = true;
-                break;
-            }
+        while (!valid) {
+            System.out.print("--> Enter mobile No :- ");
+            mobileNo = sc.next();
+            valid = checkMobileNo(mobileNo);
         }
-        if (!found) {
-            System.out.println("Employee not found!");
-        }
+        EmployeeManagement.employee[loginIndex].mobileNo = mobileNo;
+        System.out.println("Your mobile no. updated successfully");
     }
 
     // Method to update employee email ID
-    void updateEmailId(Employee[] employee, String id, int employeeCount, Scanner sc) {
-        boolean valid = false, found = false;
+    void updateEmailId(Scanner sc) {
+        boolean valid = false;
         String email = null;
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(id)) {
-                while (!valid) {
-                    System.out.print("--> Enter email-id :- ");
-                    email = sc.next();
-                    valid = checkEmail(email);
-                }
-                employee[i].emailId = email;
-                System.out.println("Your email updated successfully");
-                found = true;
-                break;
-            }
+        while (!valid) {
+            System.out.print("--> Enter email-id :- ");
+            email = sc.next();
+            valid = checkEmail(email);
         }
-        if (!found) {
-            System.out.println("Employee not found!");
-        }
+        EmployeeManagement.employee[loginIndex].emailId = email;
+        System.out.println("Your email updated successfully");
     }
 }
 
@@ -1019,7 +971,7 @@ class EmployeeManagement { // start class EmployeeManagement
                             employeeLoginChoice = sc.nextInt();
                             switch (employeeLoginChoice) {//start switch for employee login case
                                 case 1://case 1 for view profile
-                                    portal.viewProfile(employee, id);
+                                    portal.viewProfile();
                                     System.out.println();
                                     System.out.print("--> Can you update your profile ? (yes/no) :- ");
                                     String askUpdate = sc.next();
@@ -1036,16 +988,16 @@ class EmployeeManagement { // start class EmployeeManagement
                                             updateChoice = sc.nextInt();
                                             switch (updateChoice) {//start switch for update employee profile
                                                 case 1://update first name
-                                                    portal.updateFirstName(employee, id, EmployeePortal.employeeCount, sc);
+                                                    portal.updateFirstName( sc);
                                                     break;
                                                 case 2://update last name
-                                                    portal.updateLastName(employee, id, EmployeePortal.employeeCount, sc);
+                                                    portal.updateLastName( sc);
                                                     break;
                                                 case 3://update email
-                                                    portal.updateEmailId(employee, id, EmployeePortal.employeeCount, sc);
+                                                    portal.updateEmailId( sc);
                                                     break;
                                                 case 4://update mobile no
-                                                    portal.updateMobileNo(employee, id, EmployeePortal.employeeCount, sc);
+                                                    portal.updateMobileNo( sc);
                                                     break;
                                                 default:
                                                     System.out.println("Enter valid choice!");
@@ -1058,10 +1010,10 @@ class EmployeeManagement { // start class EmployeeManagement
                                     }
                                     break;
                                 case 2:// case 2 for view Salary details
-                                    portal.viewSalaryDetails(employee, id);
+                                    portal.viewSalaryDetails();
                                     break;
                                 case 3://case 3 for reset password
-                                    portal.passwordReset(employee, EmployeePortal.employeeCount, id, sc);
+                                    portal.passwordReset(sc);
                                     System.out.println("Password Reset Successfully");
                                     break;
                                 case 4://case 4 for submit a leave application
