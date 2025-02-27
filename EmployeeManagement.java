@@ -913,13 +913,13 @@ class EmployeeManagement { // start class EmployeeManagement
 
         Manager manager = new Manager();
 
-        System.out.println("--------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------");
         registeredEmployee[EmployeePortal.registeredEmployeeCount++] = new RegisteredEmployee("Ansh", "Patoliya", "ap1331@gmail.com", "14/08/2006", "8160369100", "467620849439", "surat", "Admin@123");
         registeredEmployee[EmployeePortal.registeredEmployeeCount - 1].displayProfile();
-        System.out.println("--------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------");
         registeredEmployee[EmployeePortal.registeredEmployeeCount++] = new RegisteredEmployee("Priyansh", "Vekariya", "vp1331@gmail.com", "26/08/2006", "6354921104", "902320978264", "ahmedabad", "Admin@123");
         registeredEmployee[EmployeePortal.registeredEmployeeCount - 1].displayProfile();
-        System.out.println("--------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------");
         registeredEmployee[EmployeePortal.registeredEmployeeCount++] = new RegisteredEmployee("Dwarkesh", "Kathiriya", "dk1331@gmail.com", "30/11/2006", "9265060137", "672396271635", "ahmedabad", "Admin@123");
         registeredEmployee[EmployeePortal.registeredEmployeeCount - 1].displayProfile();
         System.out.println("--------------------------------------------------------------");
