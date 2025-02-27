@@ -395,7 +395,7 @@ class Manager {
     }
 
     // Method to approve or reject leave requests of employee
-    void approveLeave( Scanner sc) {
+    void approveLeave(Scanner sc) {
 
         System.out.println("\n=========== Approve Leave Requests ==============");
         int no = 0; // Counter for leave requests
@@ -1124,7 +1124,7 @@ class EmployeeManagement { // start class EmployeeManagement
                                     }//end while for search employee
                                     break;
                                 case 6://case 6 for approve leave
-                                    manager.approveLeave( sc);
+                                    manager.approveLeave(sc);
                                     break;
                                 case 7://case 7 for rejected employee list
                                     manager.rejectedEmployee(registeredEmployee);
