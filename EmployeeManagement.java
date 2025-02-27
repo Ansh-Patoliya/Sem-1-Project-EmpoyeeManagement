@@ -133,7 +133,7 @@ class Employee extends RegisteredEmployee {
     // Method for an employee to apply for leave
     void applyForLeave(Scanner sc) {
 
-        int loginIndex=EmployeePortal.loginIndex;
+        int loginIndex = EmployeePortal.loginIndex;
         if (EmployeeManagement.employee[EmployeePortal.loginIndex].leaveRequestCount == 10) {
             System.out.println("Cannot apply for more leaves. Maximum limit reached.");
             return;
@@ -165,77 +165,70 @@ class Employee extends RegisteredEmployee {
     }
 
     // Check the status of leave requests for an employee
-    void checkLeaveStatus(Employee employee[], String employeeId, int employeeCount) {
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(employeeId)) {
-                System.out.println("\n======== Leave Status ========");
+    void checkLeaveStatus() {
+        int loginIndex = EmployeePortal.loginIndex;
+        System.out.println("\n======== Leave Status ========");
 
-                // If there are no leave requests
-                if (employee[i].leaveRequestCount == 0) {
-                    System.out.println("No leave requests found.");
-                    return;
-                }
-
-                System.out.println("Hi " + employee[i].fullName + ", you're currently viewing the status of your leave application.");
-                for (int j = 0; j < employee[i].leaveRequestCount; j++) {
-                    employee[i].leaveRequests[j].displayLeaveRequest(); // Call method to display leave request details
-                    System.out.println("-------------------------------");
-                }
-            }
+        // If there are no leave requests
+        if (EmployeeManagement.employee[loginIndex].leaveRequestCount == 0) {
+            System.out.println("No leave requests found.");
+            return;
         }
+
+        System.out.println("Hi " + EmployeeManagement.employee[loginIndex].fullName + ", you're currently viewing the status of your leave application.");
+        for (int j = 0; j < EmployeeManagement.employee[loginIndex].leaveRequestCount; j++) {
+            EmployeeManagement.employee[loginIndex].leaveRequests[j].displayLeaveRequest(); // Call method to display leave request details
+            System.out.println("-------------------------------");
+        }
+
     }
 
     // Cancel a pending leave request
-    void cancelLeaveRequest(Employee[] employee, String employeeId, int employeeCount, Scanner sc) {
+    void cancelLeaveRequest(Scanner sc) {
         System.out.println("\n============ Cancel Leave Request ============");
 
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(employeeId)) {
-                System.out.println("Leave Requests for Employee ID: " + employeeId);
+        int loginIndex = EmployeePortal.loginIndex;
+        System.out.println("Leave Requests for Employee ID: " + employeeId);
 
-                boolean hasPendingRequest = false;
+        boolean hasPendingRequest = false;
 
-                // Display all pending leave requests
-                for (int j = 0; j < employee[i].leaveRequestCount; j++) {
-                    if (employee[i].leaveRequests[j].leaveStatus.equalsIgnoreCase("Pending")) {
-                        System.out.println("[" + (j + 1) + "] Leave Days: " + employee[i].leaveRequests[j].leaveDays +
-                                ", Reason: " + employee[i].leaveRequests[j].leaveReason +
-                                ", Status: " + employee[i].leaveRequests[j].leaveStatus);
-                        hasPendingRequest = true;
-                    }
-                }
-
-                // If there are no pending leave requests
-                if (!hasPendingRequest) {
-                    System.out.println("No pending leave requests found for this employee.");
-                    return;
-                }
-
-                System.out.print("--> Enter the leave request number to cancel: ");
-                int leaveIndex = sc.nextInt() - 1;
-
-                // Validate input and ensure the leave request is pending
-                if (leaveIndex >= 0 && leaveIndex < employee[i].leaveRequestCount &&
-                        employee[i].leaveRequests[leaveIndex].leaveStatus.equalsIgnoreCase("Pending")) {
-
-                    // Re-add canceled leave days
-                    employee[i].remainLeaveDay += employee[i].leaveRequests[leaveIndex].leaveDays;
-
-                    // Shift leave requests in array to remove the canceled request
-                    for (int k = leaveIndex; k < employee[i].leaveRequestCount - 1; k++) {
-                        employee[i].leaveRequests[k] = employee[i].leaveRequests[k + 1];
-                    }
-                    employee[i].leaveRequests[employee[i].leaveRequestCount - 1] = null;
-                    employee[i].leaveRequestCount--;
-
-                    System.out.println("Leave request canceled successfully for Employee ID: " + employeeId);
-                } else {
-                    System.out.println("Invalid leave request number or leave is not pending.");
-                }
-                return;
+        // Display all pending leave requests
+        for (int j = 0; j < EmployeeManagement.employee[loginIndex].leaveRequestCount; j++) {
+            if (EmployeeManagement.employee[loginIndex].leaveRequests[j].leaveStatus.equalsIgnoreCase("Pending")) {
+                System.out.println("[" + (j + 1) + "] Leave Days: " + EmployeeManagement.employee[loginIndex].leaveRequests[j].leaveDays +
+                        ", Reason: " + EmployeeManagement.employee[loginIndex].leaveRequests[j].leaveReason +
+                        ", Status: " + EmployeeManagement.employee[loginIndex].leaveRequests[j].leaveStatus);
+                hasPendingRequest = true;
             }
         }
-        System.out.println("Employee ID not found.");
+
+        // If there are no pending leave requests
+        if (!hasPendingRequest) {
+            System.out.println("No pending leave requests found for this employee.");
+            return;
+        }
+
+        System.out.print("--> Enter the leave request number to cancel: ");
+        int leaveIndex = sc.nextInt() - 1;
+
+        // Validate input and ensure the leave request is pending
+        if (leaveIndex >= 0 && leaveIndex < EmployeeManagement.employee[loginIndex].leaveRequestCount &&
+                EmployeeManagement.employee[loginIndex].leaveRequests[leaveIndex].leaveStatus.equalsIgnoreCase("Pending")) {
+
+            // Re-add canceled leave days
+            EmployeeManagement.employee[loginIndex].remainLeaveDay += EmployeeManagement.employee[loginIndex].leaveRequests[leaveIndex].leaveDays;
+
+            // Shift leave requests in array to remove the canceled request
+            for (int k = leaveIndex; k < EmployeeManagement.employee[loginIndex].leaveRequestCount - 1; k++) {
+                EmployeeManagement.employee[loginIndex].leaveRequests[k] = EmployeeManagement.employee[loginIndex].leaveRequests[k + 1];
+            }
+            EmployeeManagement.employee[loginIndex].leaveRequests[EmployeeManagement.employee[loginIndex].leaveRequestCount - 1] = null;
+            EmployeeManagement.employee[loginIndex].leaveRequestCount--;
+
+            System.out.println("Leave request canceled successfully for Employee ID: " + employeeId);
+        } else {
+            System.out.println("Invalid leave request number or leave is not pending.");
+        }
     }
 }
 
@@ -318,9 +311,9 @@ class Manager {
             System.out.println("---> Enter valid decision.");
     }
 
-    void rejectedEmployee(RegisteredEmployee[] registeredEmployee, int registeredEmployeeCount) {
+    void rejectedEmployee(RegisteredEmployee[] registeredEmployee) {
         boolean found = false;
-        for (int i = 0; i < registeredEmployeeCount; i++) {
+        for (int i = 0; i < EmployeePortal.registeredEmployeeCount; i++) {
             if (registeredEmployee[i].status.equalsIgnoreCase("Rejected")) {
                 found = true;
                 System.out.println("[" + (i + 1) + "] .");
@@ -335,18 +328,18 @@ class Manager {
     }
 
     // Method to display the list of all employee
-    void viewAllEmployeeList(Employee[] employee, int employeeCount) {
+    void viewAllEmployeeList() {
         boolean found = false;
-        for (int i = 0; i < employeeCount; i++) {
+        for (int i = 0; i < EmployeePortal.employeeCount; i++) {
             found = true;
             System.out.println("--> Employee " + (i + 1) + " :-- ");
             System.out.println("--------------------------------------------------------------");
-            System.out.println("Employee ID  :- " + employee[i].employeeId);
-            System.out.println("Full Name    :- " + employee[i].fullName);
-            System.out.println("Email Id     :- " + employee[i].emailId);
-            System.out.println("Mobile No    :- " + employee[i].mobileNo);
+            System.out.println("Employee ID  :- " + EmployeeManagement.employee[i].employeeId);
+            System.out.println("Full Name    :- " + EmployeeManagement.employee[i].fullName);
+            System.out.println("Email Id     :- " + EmployeeManagement.employee[i].emailId);
+            System.out.println("Mobile No    :- " + EmployeeManagement.employee[i].mobileNo);
             // Updating and displaying total salary details
-            employee[i].setTotalSalary();
+            EmployeeManagement.employee[i].setTotalSalary();
             System.out.println();
         }
         if (!found)
@@ -354,39 +347,41 @@ class Manager {
     }
 
     // Method to update an employee's salary based on employee ID
-    void updateEmployeealary(Employee[] employee, String id, int employeeCount, Scanner sc) {
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee[i].employeeId.equals(id)) {
+    void updateEmployeealary(String id, Scanner sc) {
+        int loginIndex = EmployeePortal.loginIndex;
+        for (int i = 0; i < EmployeePortal.employeeCount; i++) {
+            if (EmployeeManagement.employee[i].employeeId.equals(id)) {
                 System.out.print("Enter Employee New Basic Salary :- ");
                 // Updating the employee's basic salary
-                employee[i].basicSalary = sc.nextDouble();
+                EmployeeManagement.employee[i].basicSalary = sc.nextDouble();
                 // Recalculating the total salary based on the updated basic salary
-                employee[i].setTotalSalary();
+                EmployeeManagement.employee[i].setTotalSalary();
                 System.out.println("The manager has successfully updated the salary details for employee ID "
-                        + employee[i].employeeId + " in the system.");
+                        + EmployeeManagement.employee[i].employeeId + " in the system.");
                 break;
             }
         }
     }
 
     // Method to search for an employee based on different attributes (ID, Name, Email, or City)
-    void searchEmployee(Employee employee[], int employeeCount, String type, String value) {
+    void searchEmployee(String type, String value) {
         boolean found = false;
-        for (int i = 0; i < employeeCount; i++) {
+        int loginIndex = EmployeePortal.loginIndex;
+        for (int i = 0; i < EmployeePortal.employeeCount; i++) {
             // Matching based on selected search type
-            if ((type.equals("id") && employee[i].employeeId.equals(value)) ||
-                    (type.equals("name") && employee[i].firstName.equalsIgnoreCase(value)) ||
-                    (type.equals("email") && employee[i].emailId.equals(value)) ||
-                    (type.equals("city") && employee[i].address.equals(value))) {
+            if ((type.equals("id") && EmployeeManagement.employee[i].employeeId.equals(value)) ||
+                    (type.equals("name") && EmployeeManagement.employee[i].firstName.equalsIgnoreCase(value)) ||
+                    (type.equals("email") && EmployeeManagement.employee[i].emailId.equals(value)) ||
+                    (type.equals("city") && EmployeeManagement.employee[i].address.equals(value))) {
 
                 System.out.println("--> Employee " + (i + 1) + " :-- ");
                 System.out.println("--------------------------------------------------------------");
-                System.out.println("Employee ID  :- " + employee[i].employeeId);
-                System.out.println("Full Name    :- " + employee[i].fullName);
-                System.out.println("Email Id     :- " + employee[i].emailId);
-                System.out.println("Mobile No    :- " + employee[i].mobileNo);
-                System.out.println("City         :- " + employee[i].address);
-                System.out.println("Total Salary :- " + employee[i].totalSalary);
+                System.out.println("Employee ID  :- " + EmployeeManagement.employee[i].employeeId);
+                System.out.println("Full Name    :- " + EmployeeManagement.employee[i].fullName);
+                System.out.println("Email Id     :- " + EmployeeManagement.employee[i].emailId);
+                System.out.println("Mobile No    :- " + EmployeeManagement.employee[i].mobileNo);
+                System.out.println("City         :- " + EmployeeManagement.employee[i].address);
+                System.out.println("Total Salary :- " + EmployeeManagement.employee[i].totalSalary);
                 System.out.println("--------------------------------------------------------------");
 
                 found = true;
@@ -400,28 +395,28 @@ class Manager {
     }
 
     // Method to approve or reject leave requests of employee
-    void approveLeave(Employee employee[], int employeeCount, Scanner sc) {
+    void approveLeave( Scanner sc) {
 
         System.out.println("\n=========== Approve Leave Requests ==============");
         int no = 0; // Counter for leave requests
 
-        for (int i = 0; i < employeeCount; i++) {
+        for (int i = 0; i < EmployeePortal.employeeCount; i++) {
             // If an employee has no leave requests
-            if (employee[i].leaveRequestCount == 0) {
-                System.out.println("No leave requests to approve for Employee ID: " + employee[i].employeeId);
+            if (EmployeeManagement.employee[i].leaveRequestCount == 0) {
+                System.out.println("No leave requests to approve for Employee ID: " + EmployeeManagement.employee[i].employeeId);
                 continue;
             }
 
-            for (int j = 0; j < employee[i].leaveRequestCount; j++) {
+            for (int j = 0; j < EmployeeManagement.employee[i].leaveRequestCount; j++) {
                 // Skip already approved or rejected leave requests
-                if (employee[i].leaveRequests[j].leaveStatus.equalsIgnoreCase("Approved") ||
-                        employee[i].leaveRequests[j].leaveStatus.equalsIgnoreCase("Rejected")) {
+                if (EmployeeManagement.employee[i].leaveRequests[j].leaveStatus.equalsIgnoreCase("Approved") ||
+                        EmployeeManagement.employee[i].leaveRequests[j].leaveStatus.equalsIgnoreCase("Rejected")) {
                     continue;
                 }
 
                 // Displaying leave request details
-                System.out.println("\n---> " + (++no) + ".\nLeave Request #" + (j + 1) + " for Employee ID: " + employee[i].employeeId);
-                employee[i].leaveRequests[j].displayLeaveRequest();
+                System.out.println("\n---> " + (++no) + ".\nLeave Request #" + (j + 1) + " for Employee ID: " + EmployeeManagement.employee[i].employeeId);
+                EmployeeManagement.employee[i].leaveRequests[j].displayLeaveRequest();
 
                 // Asking manager for approval decision
                 while (true) {
@@ -430,14 +425,14 @@ class Manager {
 
                     if (decision.equalsIgnoreCase("yes")) {
                         // Approving leave request
-                        employee[i].leaveRequests[j].leaveStatus = "Approved";
-                        System.out.println("Leave request for employee ID " + employee[i].employeeId + " has been successfully approved by the manager.");
+                        EmployeeManagement.employee[i].leaveRequests[j].leaveStatus = "Approved";
+                        System.out.println("Leave request for employee ID " + EmployeeManagement.employee[i].employeeId + " has been successfully approved by the manager.");
                         break;
                     } else if (decision.equalsIgnoreCase("no")) {
                         // Rejecting leave request and restoring leave days
-                        employee[i].leaveRequests[j].leaveStatus = "Rejected";
-                        employee[i].remainLeaveDay += employee[i].leaveRequests[j].leaveDays;
-                        System.out.println("Leave request for employee ID " + employee[i].employeeId + " has been rejected by the manager.");
+                        EmployeeManagement.employee[i].leaveRequests[j].leaveStatus = "Rejected";
+                        EmployeeManagement.employee[i].remainLeaveDay += EmployeeManagement.employee[i].leaveRequests[j].leaveDays;
+                        System.out.println("Leave request for employee ID " + EmployeeManagement.employee[i].employeeId + " has been rejected by the manager.");
                         break;
                     } else if (decision.equals("0")) {
                         // Keeping leave request pending
@@ -1017,10 +1012,10 @@ class EmployeeManagement { // start class EmployeeManagement
                                     employees.applyForLeave(sc);
                                     break;
                                 case 5://case 5 for cancel a leave application
-                                    employees.cancelLeaveRequest(employee, id, EmployeePortal.employeeCount, sc);
+                                    employees.cancelLeaveRequest(sc);
                                     break;
                                 case 6://case 6 for check leave status
-                                    employees.checkLeaveStatus(employee, id, EmployeePortal.employeeCount);
+                                    employees.checkLeaveStatus();
                                     break;
                                 case 7://case 7 for log out
                                     System.out.println("# You've successfully logged out. Take care and see you next time!");
@@ -1060,12 +1055,12 @@ class EmployeeManagement { // start class EmployeeManagement
                                     break;
                                 case 2://case 2 for view all employee details
                                     System.out.println("You are now viewing all employee details.");
-                                    manager.viewAllEmployeeList(employee, EmployeePortal.employeeCount);
+                                    manager.viewAllEmployeeList();
                                     break;
                                 case 3://case 3 for update employee salary
                                     System.out.print("--> Enter Employee ID :- ");
                                     id = sc.next();
-                                    manager.updateEmployeealary(employee, id, EmployeePortal.employeeCount, sc);
+                                    manager.updateEmployeealary(id, sc);
                                     break;
                                 case 4://case 4 for change salary descriptions
                                     System.out.print("--> Enter new DA  :- ");
@@ -1097,28 +1092,28 @@ class EmployeeManagement { // start class EmployeeManagement
                                                 System.out.println("You selected: Search by Employee ID");
                                                 System.out.print("--> Enter Employee ID:- ");
                                                 id = sc.next();
-                                                manager.searchEmployee(employee, EmployeePortal.employeeCount, "id", id);
+                                                manager.searchEmployee("id", id);
                                                 break;
                                             case 2://case 2 for search by employee name
                                                 System.out.println("You selected: Search by Employee Name");
                                                 System.out.print("--> Enter Employee First Name:- ");
                                                 sc.nextLine();
                                                 String fname = sc.nextLine();
-                                                manager.searchEmployee(employee, EmployeePortal.employeeCount, "name", fname);
+                                                manager.searchEmployee("name", fname);
                                                 break;
                                             case 3://case 3 for search by employee email
                                                 System.out.println("You selected: Search by Employee Email ID");
                                                 System.out.print("--> Enter Employee Email:- ");
                                                 sc.nextLine();
                                                 String email = sc.nextLine();
-                                                manager.searchEmployee(employee, EmployeePortal.employeeCount, "email", email);
+                                                manager.searchEmployee("email", email);
                                                 break;
                                             case 4://case 4 for search by employee city
                                                 System.out.println("You selected: Search by Address (City)");
                                                 System.out.print("--> Enter City:- ");
                                                 sc.nextLine();
                                                 String city = sc.nextLine();
-                                                manager.searchEmployee(employee, EmployeePortal.employeeCount, "city", city);
+                                                manager.searchEmployee("city", city);
                                                 break;
                                             case 5://case 5 for back to main menu
                                                 break;
@@ -1129,10 +1124,10 @@ class EmployeeManagement { // start class EmployeeManagement
                                     }//end while for search employee
                                     break;
                                 case 6://case 6 for approve leave
-                                    manager.approveLeave(employee, EmployeePortal.employeeCount, sc);
+                                    manager.approveLeave( sc);
                                     break;
                                 case 7://case 7 for rejected employee list
-                                    manager.rejectedEmployee(registeredEmployee, EmployeePortal.registeredEmployeeCount);
+                                    manager.rejectedEmployee(registeredEmployee);
                                     break;
                                 case 8://case 8 for manager log out
                                     System.out.println("---> The manager has successfully logged out of the system.");
